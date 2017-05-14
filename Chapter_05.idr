@@ -1,5 +1,3 @@
-module Chapter5
-
 import System
 import Data.Vect
 
@@ -79,7 +77,7 @@ readAndSave = do
   xs <- readToBlank
   putStrLn "Enter a filename:"
   fname <- getLine
-  Right _ <- writeFile fname (show xs)
+  Right _ <- writeFile fname (unlines xs)
     | Left err => putStrLn (show err)
   putStrLn $ "Wrote to file " ++ fname
 

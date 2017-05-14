@@ -1,5 +1,3 @@
-module Chapter6
-
 import Data.Vect
 
 -- 6.2
@@ -48,7 +46,7 @@ toFormat (c :: chars) = case toFormat chars of
 
 printf : (fmt : String) -> PrintfType (toFormat (unpack fmt))
 printf fmt = printfFmt _ ""
-                             
+
 -- Exercise 3
 TupleVect : (n : Nat) -> Type -> Type
 TupleVect Z _ = ()

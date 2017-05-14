@@ -1,5 +1,3 @@
-module Chapter4
-
 import Data.Vect
 
 data Tree elem = Empty
