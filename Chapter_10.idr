@@ -2,6 +2,8 @@ import Data.List.Views
 import Data.Vect
 import Data.Vect.Views
 import Data.Nat.Views
+import Shape_abs
+import DataStore_10
 
 -- 10.1
 -- Exercise 1
@@ -63,3 +65,25 @@ palindrome xs with (vList xs)
       = if x == y
            then palindrome ys | rec
            else False
+
+-- 10.3
+-- Exercise 1
+getValues : DataStore (SString .+. val_scheme) ->
+            List (SchemaType val_scheme)
+getValues store with (storeView store)
+  getValues _ | SNil = []
+  getValues (addToStore (key, val) store) | (SAdd rec)
+      = val :: (getValues store) | rec
+
+testStore : DataStore (SString .+. SInt)
+testStore = addToStore ("First", 1) $
+            addToStore ("Second", 2) $
+            empty
+
+-- Exercise 2
+-- Definition of ShapeView is in Shape_abs.idr
+area : Shape -> Double
+area s with (shapeView s)
+  area (triangle base height) | STriangle = base * height * 0.5
+  area (rectangle width height) | SRectangle = width * height
+  area (circle radius) | SCircle = pi * radius * radius
