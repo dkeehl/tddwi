@@ -79,26 +79,28 @@ readInput prompt = do PutStr prompt
                          else Pure (Answer $ cast answer)
 
 mutual
-  quiz : Stream Int -> (score : Nat) -> ConsoleIO Nat
-  quiz (num1 :: num2 :: nums) score
-      = do PutStr ("Score so far: " ++ show score ++ "\n")
+  quiz : Stream Int -> (times : Nat) -> (score : Nat) -> ConsoleIO (Nat, Nat)
+  quiz (num1 :: num2 :: nums) times score
+      = do PutStr
+             ("Score so far: " ++ show score ++ " / " ++ show times ++ "\n")
            -- here (>>=) is Bind
            input <- readInput (show num1 ++ " * " ++ show num2 ++ " = ? ")
            -- here (>>=) is DO
            case input of
                 Answer answer => if answer == num1 * num2
-                                    then correct nums score
-                                    else wrong nums (num1 * num2) score
-                QuitCmd => Quit score
+                                    then correct nums times score
+                                    else wrong nums (num1 * num2) times score
+                QuitCmd => Quit (score, times)
 
-  correct : Stream Int -> (score : Nat) -> ConsoleIO Nat
-  correct xs score = do PutStr "Correct!\n"
-                        quiz xs (score + 1)
+  correct : Stream Int -> (times : Nat) -> (score : Nat) -> ConsoleIO (Nat, Nat)
+  correct nums times score = do PutStr "Correct!\n"
+                                quiz nums (times + 1) (score + 1)
 
-  wrong : Stream Int -> (answer : Int) -> (score : Nat) -> ConsoleIO Nat
-  wrong xs answer score
+  wrong : Stream Int -> (answer : Int) ->  (times : Nat) -> (score : Nat) ->
+          ConsoleIO (Nat, Nat)
+  wrong nums answer times score
       = do PutStr ("Wrong, the answer is " ++ show answer ++ "\n")
-           quiz xs score
+           quiz nums (times + 1) score
 
 arithInputs : (seed : Int) -> Stream Int
 arithInputs seed = map bound (randoms seed)
@@ -110,18 +112,7 @@ arithInputs seed = map bound (randoms seed)
 partial
 main : IO ()
 main = do seed <- time
-          Just score <- run forever (quiz (arithInputs (fromInteger seed)) 0)
+          Just (score, times) <- run forever $
+            quiz (arithInputs (fromInteger seed)) 0 0
             | Nothing => putStrLn "Run out of fuel"
-          putStrLn ("Final score: " ++ show score)
-
-
-
-
-
-
-
-
-
-
-
---
+          putStrLn ("Final score: " ++ show score ++ " / " ++ show times)
