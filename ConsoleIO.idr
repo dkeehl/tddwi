@@ -6,6 +6,9 @@ public export
 data Command : Type -> Type where
      PutStr : String -> Command ()
      GetLine : Command String
+     ReadFile : (filepath : String) -> Command (Either FileError String)
+     WriteFile : (filepath : String) -> (contents : String) ->
+                 Command (Either FileError ())
 
      Pure : a -> Command a
      Bind : Command a -> (a -> Command b) -> Command b
@@ -14,6 +17,8 @@ export
 runCommand : Command a -> IO a
 runCommand (PutStr x) = putStr x
 runCommand GetLine = getLine
+runCommand (ReadFile fn) = readFile fn
+runCommand (WriteFile fn contents) = writeFile fn contents
 runCommand (Pure x) = pure x
 runCommand (Bind c f) = do res <- runCommand c
                            runCommand (f res)
