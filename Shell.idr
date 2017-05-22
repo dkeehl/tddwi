@@ -19,7 +19,10 @@ parseInput input = let (cmd, args) = span (/= ' ') input in
                        parseHelp cmd (trim args)
 
 usage : String
-usage = "usage:\ncat [filename]\ncopy [source] [destination]\nexit\n"
+usage = "Usage:\n\
+        \cat [filename]\n\
+        \copy [source] [destination]\n\
+        \exit\n"
 
 mutual
   shell : ConsoleIO ()
