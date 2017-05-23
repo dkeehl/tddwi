@@ -57,20 +57,8 @@ data Command : Type -> Type where
 -- Exercise 2
 mutual
   Functor Command where
-    map func (PutStr x) = do PutStr x
-                             pure (func ())
-    map func GetLine = do str <- GetLine
-                          pure (func str)
-    map func GetRandom = do n <- GetRandom
-                            pure (func n)
-    map func GetGameState = do st <- GetGameState
-                               pure (func st)
-    map func (PutGameState x) = do PutGameState x
-                                   pure (func ())
-    map func (Pure x) = Pure (func x)
-    map func (Bind c f) = do res <- c
-                             x <- f res
-                             pure (func x)
+    map func c = do res <- c
+                    pure (func res)
 
   Applicative Command where
     pure = Pure
